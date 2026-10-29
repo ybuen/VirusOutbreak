@@ -8,7 +8,7 @@ public class FunkyList<E extends Indexable> extends ArrayList<E> {
     public boolean add(E item) {
 
         if (item.getIndex() != Indexable.DEFAULT_VALUE) { // Check if item exists already
-            throw new IllegalArgumentException("Item must not already exist in the list");
+            return false;
         }
 
         boolean bool = super.add(item);
