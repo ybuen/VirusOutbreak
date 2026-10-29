@@ -1,3 +1,5 @@
+import Visualizer.Visualizer;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,7 +38,7 @@ public class Simulation {
         initializeCells();
     }
 
-    public void startSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
+    public void startConsoleSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
         Hood firstHood = grid[startY][startX];
 
         firstHood.infect(0);
@@ -51,13 +53,28 @@ public class Simulation {
         }
     }
 
+    public void startVisualSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
+        Hood firstHood = grid[startY][startX];
+
+        firstHood.infect(0);
+        activeHoods.add(firstHood);
+
+        Visualizer visual = new Visualizer(this.toString());
+
+        for (int i = 1; i <= cycles; i ++) {
+            Thread.sleep(delayInMS);
+            cycle(i);
+            visual.update(this.toString());
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder stringGrid = new StringBuilder();
         for (int i1 = 0; i1 < maxY; i1 ++) {
             for (int i2 = 0; i2 < maxX; i2 ++) {
                 stringGrid.append(grid[i1][i2].toString());
-                stringGrid.append("  ");
+                //stringGrid.append("  ");
             }
             stringGrid.append("\n");
         }
