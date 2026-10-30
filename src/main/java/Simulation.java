@@ -31,7 +31,7 @@ public class Simulation {
         this.P1 = P1; // P1 = 25 -> 25% for example
         this.P2 = P2; // P2 = 75 -> 75% for example
         this.V = V;
-        this.A = A;
+        this.A = Math.min(size, A); // in case A is larger than size
         this.D = D;
 
         initializeCells();
@@ -70,8 +70,8 @@ public class Simulation {
 
     private void cycle(int currentCycle) {
         spreadInfection(currentCycle);
-        updateResistances(currentCycle);
         updateNewlyInfected(currentCycle);
+        updateResistances(currentCycle);
         vaccinateHoods(currentCycle, A, D);
     }
 
@@ -159,7 +159,7 @@ public class Simulation {
         Hood current = grid[y][x];
         int newX, newY;
 
-        // Check if up down left right is in boundaries then add them to that hood's adjacents if yes
+        // Check if all surrounding hoods are in boundaries then add them to that hood's adjacents if yes
 
         for (int xOffset:OFFSETS) {
             for (int yOffset:OFFSETS) {
