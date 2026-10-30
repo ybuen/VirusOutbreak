@@ -1,16 +1,14 @@
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        int startX = 99;
-        int startY = 99;
-        int cycles = 400;
-        int msDelay = 100;
+        int startX = 132; // starting coord x, based on 0 to MaxX - 1 indexing
+        int startY = 132; // starting coord y, based on 0 to MaxY - 1
+        int cycles = 360;
+        int msDelay = 50;
 
-        Simulation sim = new Simulation(200, 200, 30, 75, 6, 6, 10);
-        //                              MaxX, MaxY, P1, P2, V, A, D
+        // Constructor params: MaxX (length), MaxY (height), P1, P2, V, A, D
+        Simulation sim = new Simulation(265, 265, 30, 75, 6, 6, 10);
 
-        sim.startVisualSimulation(startX, startY, cycles, msDelay);
-        //sim.startConsoleSimulation(startX, startY, cycles, msDelay);
-
+        sim.startVisualSimulation(startX, startY, cycles, msDelay); // For Visual Simulation
+        //sim.startConsoleSimulation(startX, startY, cycles, msDelay); // For Console Printing
     }
-
 }

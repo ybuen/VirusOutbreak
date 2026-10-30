@@ -1,5 +1,5 @@
 public class Indexable { // Without hashmap, this class can only store
-                         // it's index within a single FunkyList efficiently
+                         // its own single index within a single FunkyList efficiently
     public static final int DEFAULT_VALUE = -1;
     private int index;
 

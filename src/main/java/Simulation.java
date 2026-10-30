@@ -8,15 +8,13 @@ public class Simulation {
     private static final Random RANDOM = new Random();
 
     public final int P1, P2, V, A, D;
+    public final int maxX, maxY, size;
 
-    public final int maxX;
-    public final int maxY;
-    public final int size;
+    private final Hood[][] grid;
 
-    Hood[][] grid;
-
-    FunkyList<Hood> activeHoods;
-    ArrayList<Hood> allHoods, newlyInfectedHoods;
+    private final FunkyList<Hood> activeHoods; // iterates through only active hoods instead of all maxX*maxY hoods
+    private final ArrayList<Hood> allHoods;
+    private final ArrayList<Hood> newlyInfectedHoods; // allHoods needed for shuffling newlyInfected needed for cycle sync
 
     public Simulation(int mX, int mY, int P1, int P2, int V, int A, int D) {
         grid = new Hood[mY][mX];
@@ -38,6 +36,7 @@ public class Simulation {
         initializeCells();
     }
 
+    // Simulation Start, repeating code but 2 functions is more convenient in Main.java -------------------------------
     public void startConsoleSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
         Hood firstHood = grid[startY][startX];
 
@@ -68,21 +67,7 @@ public class Simulation {
         }
     }
 
-    @Override
-    public String toString() {
-        StringBuilder stringGrid = new StringBuilder();
-        for (int i1 = 0; i1 < maxY; i1 ++) {
-            for (int i2 = 0; i2 < maxX; i2 ++) {
-                stringGrid.append(grid[i1][i2].toString());
-                //stringGrid.append("  ");
-            }
-            stringGrid.append("\n");
-        }
-
-        return stringGrid.toString();
-    }
-
-    public void cycle(int currentCycle) {
+    private void cycle(int currentCycle) {
         spreadInfection(currentCycle);
         updateResistances(currentCycle);
         updateNewlyInfected(currentCycle);
@@ -95,13 +80,11 @@ public class Simulation {
 
         for (Hood hood:activeHoods) {
             if (hood.isInfected()) {
-
                 for (Hood adjacent:hood.getAdjacents()) {
                     infectionSucceeded = adjacent.updateInfection(currentCycle, P1, P2);
                     if (infectionSucceeded) {
                         newlyInfectedHoods.add(adjacent);
                     }
-
                 }
             }
         }
@@ -111,7 +94,6 @@ public class Simulation {
         int i = 0;
         while (i < activeHoods.size()) {
             Hood hood = activeHoods.get(i);
-
             if (hood.updateResistance(currentCycle, V)) {
                 activeHoods.funkyRemove(hood);
             } else {
@@ -129,7 +111,7 @@ public class Simulation {
     }
 
     private void vaccinateHoods(int currentCycle, int A, int D) {
-        if (currentCycle <= D) {
+        if (currentCycle <= D) { // If D days havent passed, doesnt do anything
             return;
         }
 
@@ -137,7 +119,7 @@ public class Simulation {
         int randomIndex;
         boolean successfullyVaccinated;
 
-        for (int i = 0; i < A; i ++) {
+        for (int i = 0; i < A; i ++) { // Fisher-Yates shuffling because its most efficient
             randomIndex = RANDOM.nextInt(i, size);
             selected = allHoods.get(randomIndex);
             allHoods.set(randomIndex, allHoods.get(i));
@@ -157,7 +139,7 @@ public class Simulation {
 
     // INITIALIZATION HELPERS ------------------------------------------------------------------------------------
     private void initializeCells() {
-        for (int i1 = 0; i1 < maxY; i1 ++) {
+        for (int i1 = 0; i1 < maxY; i1 ++) { // Loops through everything once to instantiate hoods
             for (int i2 = 0; i2 < maxX; i2 ++) {
                 Hood newHood = new Hood();
                 grid[i1][i2] = newHood;
@@ -165,7 +147,7 @@ public class Simulation {
             }
         }
 
-        for (int i1 = 0; i1 < maxY; i1 ++) {
+        for (int i1 = 0; i1 < maxY; i1 ++) { // Loops again to set adjacents (slightly more efficient and convenient)
             for (int i2 = 0; i2 < maxX; i2 ++) {
                 setAdjacents(i2, i1);
             }
@@ -175,7 +157,7 @@ public class Simulation {
     private void setAdjacents(int x, int y) {
         Hood current = grid[y][x];
 
-        // Check if up down left right is within boundaries, and then add them to that hood's adjacents
+        // Check if up down left right is in boundaries then add them to that hood's adjacents if yes
         if (x - 1 >= 0) {
             current.addAdjacent(grid[y][x - 1]);
         }
@@ -188,5 +170,19 @@ public class Simulation {
         if (y + 1 < maxY) {
             current.addAdjacent(grid[y+1][x]);
         }
+    }
+
+    // String override --------------------------------------------------------------------------------------------
+    @Override
+    public String toString() {
+        StringBuilder stringGrid = new StringBuilder();
+        for (int i1 = 0; i1 < maxY; i1 ++) {
+            for (int i2 = 0; i2 < maxX; i2 ++) {
+                stringGrid.append(grid[i1][i2].toString());
+            }
+            stringGrid.append("\n");
+        }
+
+        return stringGrid.toString();
     }
 }

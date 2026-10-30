@@ -21,6 +21,7 @@ public class Hood extends Indexable {
         this.lastCycleUpdated = 0;
     }
 
+    // Main scanning and updating methods ----------------------------------------------------------------------
     public boolean updateResistance(int currentCycle, int V) {
         if (status != Status.I && status != Status.V) {
             return false;
@@ -39,7 +40,6 @@ public class Hood extends Indexable {
         }
 
         lastCycleUpdated = currentCycle;
-
         int neighbouringInfected = 0;
         boolean randomInfectionRoll = false;
 
@@ -58,6 +58,7 @@ public class Hood extends Indexable {
         return randomInfectionRoll;
     }
 
+    // Changing Hood Status --------------------------------------------------------------------------------------
     public void infect(int currentCycle) {
         status = Status.I;
         cycleOfVI = currentCycle;
@@ -72,6 +73,7 @@ public class Hood extends Indexable {
         return true;
     }
 
+    // Glorified Setters and Getters ----------------------------------------------------------------------------------
     public boolean isInfected() {
         return (status == Status.I);
     }
@@ -84,11 +86,13 @@ public class Hood extends Indexable {
         return this.adjacentHoods;
     }
 
-    public boolean rollRandomInfection(int P) {
+    // RNG helper function ------------------------------------------------------------------------------------------
+    private boolean rollRandomInfection(int P) {
         int randomInt = RANDOM.nextInt(1, 101);
         return (randomInt <= P);
     }
 
+    // toString override --------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return this.status.toString();
