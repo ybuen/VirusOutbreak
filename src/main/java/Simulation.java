@@ -6,6 +6,7 @@ import java.util.Random;
 public class Simulation {
 
     private static final Random RANDOM = new Random();
+    private static final int[] OFFSETS = {1, 0, -1};
 
     public final int P1, P2, V, A, D;
     public final int maxX, maxY, size;
@@ -156,19 +157,21 @@ public class Simulation {
 
     private void setAdjacents(int x, int y) {
         Hood current = grid[y][x];
+        int newX, newY;
 
         // Check if up down left right is in boundaries then add them to that hood's adjacents if yes
-        if (x - 1 >= 0) {
-            current.addAdjacent(grid[y][x - 1]);
-        }
-        if (x + 1 < maxX) {
-            current.addAdjacent(grid[y][x + 1]);
-        }
-        if (y - 1 >= 0) {
-            current.addAdjacent(grid[y-1][x]);
-        }
-        if (y + 1 < maxY) {
-            current.addAdjacent(grid[y+1][x]);
+
+        for (int xOffset:OFFSETS) {
+            for (int yOffset:OFFSETS) {
+                if (xOffset == 0 && yOffset == 0) {
+                    continue;
+                }
+                newX = x + xOffset;
+                newY = y + yOffset;
+                if (0 <= newX && newX < maxX && 0 <= newY && newY < maxY) {
+                    current.addAdjacent(grid[newY][newX]);
+                }
+            }
         }
     }
 
