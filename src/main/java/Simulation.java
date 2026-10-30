@@ -70,8 +70,8 @@ public class Simulation {
 
     private void cycle(int currentCycle) {
         spreadInfection(currentCycle);
-        updateNewlyInfected(currentCycle);
         updateResistances(currentCycle);
+        updateNewlyInfected(currentCycle);
         vaccinateHoods(currentCycle, A, D);
     }
 
