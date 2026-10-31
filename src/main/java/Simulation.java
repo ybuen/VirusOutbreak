@@ -12,21 +12,22 @@ public class Simulation {
     public final int maxX, maxY, size;
 
     private final Hood[][] grid;
+    private final Hood[] allHoods;
 
     private final FunkyList<Hood> activeHoods; // iterates through only active hoods instead of all maxX*maxY hoods
-    private final ArrayList<Hood> allHoods;
     private final ArrayList<Hood> newlyInfectedHoods; // allHoods needed for shuffling newlyInfected needed for cycle sync
 
     public Simulation(int mX, int mY, int P1, int P2, int V, int A, int D) {
         grid = new Hood[mY][mX];
-
         activeHoods = new FunkyList<Hood>();
-        allHoods = new ArrayList<Hood>();
+
         newlyInfectedHoods = new ArrayList<Hood>();
 
         this.maxX = mX;
         this.maxY = mY;
         this.size = mX * mY;
+
+        allHoods = new Hood[size];
 
         this.P1 = P1; // P1 = 25 -> 25% for example
         this.P2 = P2; // P2 = 75 -> 75% for example
@@ -39,13 +40,8 @@ public class Simulation {
 
     // Simulation Start, repeating code but 2 functions is more convenient in Main.java -------------------------------
     public void startConsoleSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
-        Hood firstHood = grid[startY][startX];
-
-        firstHood.infect(0);
-        activeHoods.add(firstHood);
-
+        infectFirst(startX, startY);
         printCycle(0);
-
         for (int i = 1; i <= cycles; i ++) {
             Thread.sleep(delayInMS);
             cycle(i);
@@ -54,18 +50,20 @@ public class Simulation {
     }
 
     public void startVisualSimulation(int startX, int startY, int cycles, int delayInMS) throws InterruptedException{
-        Hood firstHood = grid[startY][startX];
-
-        firstHood.infect(0);
-        activeHoods.add(firstHood);
-
+        infectFirst(startX, startY);
         Visualizer visual = new Visualizer(this.toString());
-
         for (int i = 1; i <= cycles; i ++) {
             Thread.sleep(delayInMS);
             cycle(i);
             visual.update(this.toString());
         }
+    }
+
+    private void infectFirst(int startX, int startY) {
+        Hood firstHood = grid[startY][startX];
+
+        firstHood.infect(0);
+        activeHoods.add(firstHood);
     }
 
     private void cycle(int currentCycle) {
@@ -122,9 +120,9 @@ public class Simulation {
 
         for (int i = 0; i < A; i ++) { // Fisher-Yates shuffling because its most efficient
             randomIndex = RANDOM.nextInt(i, size);
-            selected = allHoods.get(randomIndex);
-            allHoods.set(randomIndex, allHoods.get(i));
-            allHoods.set(i, selected);
+            selected = allHoods[randomIndex];
+            allHoods[randomIndex] = allHoods[i];
+            allHoods[i] = selected;
 
             successfullyVaccinated = selected.vaccinate(currentCycle);
             if (successfullyVaccinated) {
@@ -144,7 +142,7 @@ public class Simulation {
             for (int i2 = 0; i2 < maxX; i2 ++) {
                 Hood newHood = new Hood();
                 grid[i1][i2] = newHood;
-                allHoods.add(newHood);
+                allHoods[i1*maxX + i2] = newHood;
             }
         }
 

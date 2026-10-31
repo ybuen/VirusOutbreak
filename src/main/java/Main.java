@@ -6,7 +6,7 @@ public class Main {
         int msDelay = 50;
 
         // Constructor params: MaxX (length), MaxY (height), P1, P2, V, A, D
-        Simulation sim = new Simulation(265, 265, 30, 45, 1, 2, 15);
+        Simulation sim = new Simulation(265, 265, 25, 40, 2, 2, 15);
 
         sim.startVisualSimulation(startX, startY, cycles, msDelay); // For Visual Simulation
         //sim.startConsoleSimulation(startX, startY, cycles, msDelay); // For Console Printing
